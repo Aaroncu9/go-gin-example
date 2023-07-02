@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type student struct {
-	Name string `json:"name"`
-	Age  uint8  `json:"age"`
-	Info string `json:"info"`
+type user struct {
+	UserName string `form:"username"`
+	Password string `form:"password"`
 }
 
 func main() {
@@ -17,13 +17,20 @@ func main() {
 	rt := gin.Default()
 
 	// 指定get 请求 json路径，调用指定函数
-	rt.GET("/student", func(ctx *gin.Context) {
-		name := ctx.Query("name")
-		age := ctx.Query("age")
-		ctx.JSON(http.StatusOK, gin.H{
-			"name": name,
-			"age":  age,
-		})
+	rt.GET("/user", func(ctx *gin.Context) {
+		// get request
+		var u user
+		err := ctx.ShouldBind(&u)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
+		} else {
+			fmt.Printf("user info %#v\n", u)
+			ctx.JSON(http.StatusOK, gin.H{
+				"msg": "ok",
+			})
+		}
 
 	})
 
