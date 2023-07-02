@@ -13,16 +13,21 @@ type student struct {
 }
 
 func main() {
+	// 默认路由
 	rt := gin.Default()
-	rt.GET("/name", func(ctx *gin.Context) {
-		stu := student{
-			Name: "liuming",
-			Age:  20,
-			Info: "三好学生",
-		}
-		ctx.JSON(http.StatusOK, stu)
+
+	// 指定get 请求 json路径，调用指定函数
+	rt.GET("/student", func(ctx *gin.Context) {
+		name := ctx.Query("name")
+		age := ctx.Query("age")
+		ctx.JSON(http.StatusOK, gin.H{
+			"name": name,
+			"age":  age,
+		})
+
 	})
 
+	// 默认0.0.0.1：8080 run
 	rt.Run()
 
 }
