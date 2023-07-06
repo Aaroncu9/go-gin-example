@@ -22,18 +22,17 @@ func main() {
 	// 默认使用了2个中间件Logger(), Recovery()
 	r := gin.Default()
 	// JSON绑定
-	r.POST("/loginJSON", func(c *gin.Context) {
+	r.GET("/:user/:password", func(c *gin.Context) {
 		// 声明接收的变量
-		var json Login
-		// 将request的body中的数据，自动按照json格式解析到结构体
-		if err := c.ShouldBindJSON(&json); err != nil {
-			// 返回错误信息
-			// gin.H封装了生成json数据的工具
+		var login Login
+		// Bind()默认解析并绑定form格式
+		// 根据请求头中content-type自动推断
+		if err := c.ShouldBindUri(&login); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 		// 判断用户名密码是否正确
-		if json.User != "root" || json.Pssword != "root" {
+		if login.User != "root" || login.Pssword != "root" {
 			c.JSON(http.StatusBadRequest, gin.H{"status": "304"})
 			return
 		}
